@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -30,7 +31,13 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-
+            CalculadoraTheme {
+                Surface(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    CalculadoraApp()
+                }
+            }
         }
     }
 }
@@ -85,7 +92,8 @@ fun CalculadoraApp() {
                     Button(
                         onClick = {
                             //(switch)
-                            when (text) {
+                            when (text)
+                            {
                                 in "0".."9" -> pantalla += text
 
                                 "C" -> {
@@ -94,7 +102,15 @@ fun CalculadoraApp() {
                                     num1 = null
                                 }
 
-                                "+", "-", "*", "/" -> {
+                                "()" -> {
+                                    pantalla = "("
+                                }
+
+                                "," -> {
+                                    pantalla = pantalla+"."
+                                }
+
+                                "+", "-", "*", "/", "%" -> {
                                     if (pantalla.isNotEmpty()) {
                                         num1 = pantalla.toDouble()
                                         operador = text
@@ -102,7 +118,7 @@ fun CalculadoraApp() {
                                     }
                                 }
 
-                                //boton igual funciona si hay algo pulsado
+                                //boton 'igual' funciona si hay algo pulsado
                                 "=" -> {
                                     if (num1 != null && operador != null && pantalla.isNotEmpty()) {
                                         val num2 = pantalla.toDouble()
@@ -112,6 +128,7 @@ fun CalculadoraApp() {
                                             "-" -> calc.resta(num1!!, num2)
                                             "*" -> calc.multiplicacion(num1!!, num2)
                                             "/" -> calc.division(num1!!, num2)
+                                            "%" -> calc.porcentaje(num1!!, num2)
                                             else -> 0.0
                                         }
                                         pantalla = resultado.toString()
@@ -122,7 +139,7 @@ fun CalculadoraApp() {
                             }
                         },
                         modifier = Modifier
-                            .weight(1f)
+                            .weight(1f)//distrubuye el espacio de botones
                             .padding(vertical = 8.dp)
                     ) {
                         Text(text, fontSize = 30.sp)

@@ -10,4 +10,7 @@ class Calculadora {
         }
         return a / b
     }
+    fun porcentaje(a: Double, b: Double): Double {
+        return (a / 100) * b
+    }
 }
