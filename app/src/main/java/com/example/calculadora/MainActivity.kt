@@ -5,10 +5,13 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -62,6 +65,71 @@ fun CalculadoraApp() {
             fontWeight = FontWeight.Bold,
         )
 
+        Spacer(Modifier.height(30.dp))
+
+        //botones numeros y operadores
+        val botones = listOf(
+            listOf("C", "()", "%", "/"),
+            listOf("7", "8", "9", "*"),
+            listOf("4", "5", "6", "-"),
+            listOf("1", "2", "3", "+"),
+            listOf("", "0", ",", "=")
+        )
+
+        botones.forEach { fila ->
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                fila.forEach { text ->
+                    Button(
+                        onClick = {
+                            //(switch)
+                            when (text) {
+                                in "0".."9" -> pantalla += text
+
+                                "C" -> {
+                                    pantalla = ""
+                                    operador = null
+                                    num1 = null
+                                }
+
+                                "+", "-", "*", "/" -> {
+                                    if (pantalla.isNotEmpty()) {
+                                        num1 = pantalla.toDouble()
+                                        operador = text
+                                        pantalla = ""
+                                    }
+                                }
+
+                                //boton igual funciona si hay algo pulsado
+                                "=" -> {
+                                    if (num1 != null && operador != null && pantalla.isNotEmpty()) {
+                                        val num2 = pantalla.toDouble()
+                                        val resultado = when (operador)
+                                        {
+                                            "+" -> calc.suma(num1!!, num2)
+                                            "-" -> calc.resta(num1!!, num2)
+                                            "*" -> calc.multiplicacion(num1!!, num2)
+                                            "/" -> calc.division(num1!!, num2)
+                                            else -> 0.0
+                                        }
+                                        pantalla = resultado.toString()
+                                        operador = null
+                                        num1 = null
+                                    }
+                                }
+                            }
+                        },
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(vertical = 8.dp)
+                    ) {
+                        Text(text, fontSize = 30.sp)
+                    }
+                }
+            }
+        }
     }
 
 }
